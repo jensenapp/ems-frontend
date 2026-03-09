@@ -1,5 +1,5 @@
-import React, { useState,useEffect } from 'react'
-import { listEmployees } from './services/EmployeeService';
+import React, { useState,useEffect} from 'react'
+import { deleteEmployee, listEmployees } from './services/EmployeeService';
 import { useNavigate } from 'react-router-dom';
 
 const ListEmployeeComponent = () => {
@@ -10,14 +10,32 @@ const ListEmployeeComponent = () => {
 
     const handleAddEmployee=()=>navigate("/add-employee");
 
-    useEffect(()=>{
-     listEmployees().then((response)=>{
+ 
+   const getAllEmployee=()=>{
+  listEmployees().then((response)=>{
         setEmployees(response.data)
      }).catch((error)=>{
         console.error(error);
      });
+   }
+  
+
+    useEffect(()=>{
+      getAllEmployee();
     },[]);
 
+
+      const removeEmployee=(id)=>{
+       deleteEmployee(id).then((response)=>{
+            getAllEmployee();
+       }).catch((error)=>{
+         console.error(error);
+       });
+      }
+
+      const updateEmployee=(id)=>{
+      navigate(`/update-employee/${id}`);
+    }
 
   return (
     <div className="container">
@@ -32,6 +50,7 @@ const ListEmployeeComponent = () => {
                 <th>firstName</th>
                 <th>lastName</th>
                 <th>email</th>
+                <th>action</th>
             </tr>
         </thead>
         <tbody>
@@ -41,6 +60,10 @@ const ListEmployeeComponent = () => {
                     <td>{item.firstName}</td>
                     <td>{item.lastName}</td>
                     <td>{item.email}</td>
+                    <td>
+                      <button className='btn btn-info' onClick={()=>updateEmployee(item.employeeId)}>Update</button>
+                       <button className='btn btn-danger' style={{ marginLeft: '10px' }} onClick={()=>removeEmployee(item.employeeId)}>Delete</button>
+                      </td>
                 </tr>
             ))}
         </tbody>
