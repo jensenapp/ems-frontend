@@ -1,9 +1,11 @@
-import axios from "axios"; 
+import apiClient from "../../api/apiClient";
 
-const REST_API_BASE_URL = 'http://localhost:8080/api/employees'; 
 
-export const listEmployees = () => axios.get(REST_API_BASE_URL); 
-export const createEmployee = (employee) => axios.post(REST_API_BASE_URL,employee); 
-export const getEmployee=(id)=>axios.get(REST_API_BASE_URL+"/"+id);
-export const updateEmployee=(id,employee)=>axios.put(REST_API_BASE_URL+"/"+id,employee);
-export const deleteEmployee=(id)=>axios.delete(REST_API_BASE_URL+"/"+id)
+
+const BASE="/employees";
+
+export const listEmployees = () => apiClient.get(BASE); 
+export const createEmployee = (employee) => apiClient.post(BASE,employee); 
+export const getEmployee=(id)=>apiClient.get(BASE+"/"+id);
+export const updateEmployee=(id,employee)=>apiClient.put(BASE+"/"+id,employee);
+export const deleteEmployee=(id)=>apiClient.delete(BASE+"/"+id)

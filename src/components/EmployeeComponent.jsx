@@ -1,12 +1,18 @@
-import { useEffect, useState} from 'react';
-import { createEmployee, getEmployee, updateEmployee } from './services/EmployeeService';
+import { redirect, useLoaderData } from 'react-router-dom';
+import { createEmployee, getEmployee, listEmployees, updateEmployee } from './services/EmployeeService';
 import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import { useState} from 'react';
+import { toast } from 'react-toastify';
 
 const EmployeeComponent = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName,  setLastName]  = useState('');
-  const [email,     setEmail]     = useState('');
+
+  const loaderData=useLoaderData();
+  
+  const [firstName, setFirstName] = useState(loaderData?.firstName || "");
+  const [lastName,  setLastName]  = useState(loaderData?.lastName || "");
+  const [email,     setEmail]     = useState(loaderData?.email || "");
+
 
   const [errors,setErrors] =useState({
     firstName:"",
@@ -15,10 +21,11 @@ const EmployeeComponent = () => {
   });
 
   const navigate=useNavigate();
+  const {id}=useParams();
 
   const validateForm = () => {
     let valid = true;
-    const errorsCopy = { ...errors }; // 複製當前 errors 物件
+    const errorsCopy = { ...errors };
 
     if (firstName.trim()) {
         errorsCopy.firstName = '';
@@ -41,111 +48,117 @@ const EmployeeComponent = () => {
         valid = false;
     }
 
-    setErrors(errorsCopy); // 更新 state
-    return valid;          // 回傳驗證結果
-}
+    setErrors(errorsCopy);
+    return valid;
+  }
 
-
-
-   const {id}=useParams();
-
-   const pageTitle=()=>{
+  const pageTitle=()=>{
       if (id) {
-        return <h2 className="text-center">Update Employee</h2>
+        return <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Update Employee</h2>
       }else{
-        return <h2 className="text-center">Add Employee</h2>
+        return <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Add Employee</h2>
       }
-   }
+  }
 
-
-
-  function saveOrUpdateEmployee(e) {
+ async function saveOrUpdateEmployee(e) {
     e.preventDefault();
-
     const employee = { firstName, lastName, email };
 
-    console.log(employee);
-
     if(validateForm()){
-
+      
+      try {
       if(id){
-       updateEmployee(id,employee).then((response)=>{
-         console.log(response.data);
-        navigate("/employees");
-       }).catch((error)=>{
-          console.error(error);
-       });
+       await updateEmployee(id,employee);
+       toast.success("更新資料完成");
       }else{        
-        createEmployee(employee).then((response)=>{
-        console.log(response.data);
-        navigate("/employees");
-    }).catch((error)=>{
-          console.error(error);
-       });
+       await createEmployee(employee);
+        toast.success("創建新資料完成");
+      }
+      navigate("/employees");
+
+      } catch (error) {
+        console.error("save error",error);
+        toast.error(error.response?.data?.message || "儲存失敗，請確認資料是否正確。");
       }
 
     }
   }
 
 
-  useEffect(()=>{
-  if(id){
-     getEmployee(id).then((response)=>{
- console.log(response.data);
- setFirstName(response.data.firstName);
-  setLastName(response.data.lastName);
-   setEmail(response.data.email);
-   }).catch((error)=>{
-    console.error(error);
-   });
-  }
-  },[id]);
-
 
   return (
-    <div className="container">
-      <br /><br />
-      <div className="row">
-        <div className="card col-md-6 offset-md-3">
+    <div className="min-h-[80vh] flex items-center justify-center py-10 px-4 sm:px-6 lg:px-8">
+      {/* 表單卡片外框 */}
+      <div className="max-w-md w-full bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div className="p-8">
           
           {pageTitle()}
           
-          <div className="card-body">
-            <form onSubmit={saveOrUpdateEmployee}>
-              <div className="form-group mb-2">
-                <label className="form-label">First Name</label>
-                <input type="text" placeholder="Enter Employee First Name"
-                  name="firstName" value={firstName} 
-                  className={`form-control ${errors.firstName ? 'is-invalid' : ''}`}
-                  onChange={(e) => setFirstName(e.target.value)}/>
-
-                  { errors.firstName && <div className='invalid-feedback'> { errors.firstName } </div> }
-
+          <div>
+            <form onSubmit={saveOrUpdateEmployee} className="space-y-5">
+              
+              {/* First Name 欄位 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                <input 
+                  type="text" 
+                  placeholder="Enter Employee First Name"
+                  name="firstName" 
+                  value={firstName} 
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
+                    errors.firstName 
+                      ? 'border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
+                  }`}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
+                { errors.firstName && <div className='text-red-500 text-sm mt-1.5'> { errors.firstName } </div> }
               </div>
-              <div className="form-group mb-2">
-                <label className="form-label">Last Name</label>
-                <input type="text" placeholder="Enter Employee Last Name"
-                  name="lastName" value={lastName} 
-                  className={`form-control ${errors.lastName ? 'is-invalid' : ''}`}
-                  onChange={(e) => setLastName(e.target.value)}/>
 
-                  { errors.lastName && <div className='invalid-feedback'> { errors.lastName } </div> }
-
-
+              {/* Last Name 欄位 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                <input 
+                  type="text" 
+                  placeholder="Enter Employee Last Name"
+                  name="lastName" 
+                  value={lastName} 
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
+                    errors.lastName 
+                      ? 'border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
+                  }`}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+                { errors.lastName && <div className='text-red-500 text-sm mt-1.5'> { errors.lastName } </div> }
               </div>
-              <div className="form-group mb-2">
-                <label className="form-label">Email</label>
-                <input type="text" placeholder="Enter Employee Email"
-                  name="email" value={email} 
-                  className={`form-control ${errors.email ? 'is-invalid' : ''}`}
-                  onChange={(e) => setEmail(e.target.value)} />
 
-{ errors.email && <div className='invalid-feedback'> { errors.email } </div> }
-
+              {/* Email 欄位 */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input 
+                  type="text" 
+                  placeholder="Enter Employee Email"
+                  name="email" 
+                  value={email} 
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
+                    errors.email 
+                      ? 'border-red-500 focus:ring-red-500' 
+                      : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
+                  }`}
+                  onChange={(e) => setEmail(e.target.value)} 
+                />
+                { errors.email && <div className='text-red-500 text-sm mt-1.5'> { errors.email } </div> }
               </div>
-              <button className="btn btn-success">
+
+              {/* 提交按鈕 */}
+              <button 
+                type="submit"
+                className="w-full mt-6 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition-colors duration-200"
+              >
                 Submit
               </button>
+              
             </form>
           </div>
         </div>
@@ -155,3 +168,27 @@ const EmployeeComponent = () => {
 };
 
 export default EmployeeComponent;
+
+export async function employeeDetailLoader({params}){
+if(!params.id){
+  return null;
+  }
+
+    const token=localStorage.getItem("jwtToken");
+  if(!token){
+    return redirect("/login");
+  }
+  
+ try {
+    const response=await getEmployee(params.id);
+     return response.data;
+ } catch (error) {
+  throw new Response(
+     error.response?.data?.errorMessage || 
+      error.message || 
+      "Failed to fetch products. Please try again.",
+      { status: error.status || 500 }
+  );
+ }
+ 
+}
