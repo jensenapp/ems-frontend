@@ -22,12 +22,13 @@ const routeDefinitions = createRoutesFromElements(
     {/* 公開路由 (所有人都能看) */}
     <Route index element={<HomeComponent />} />
     <Route path="/login" element={<Login />} action={loginAction} />
-    <Route path="/register" element={<Register />} action={registerAction} />
+    
     {/* 受保護的路由 (必須登入才能看) */}
     <Route element={<ProtectedRoute />}>
       <Route path="/employees" element={<ListEmployeeComponent />} loader={employeeLoader}/>
       <Route path="/add-employee" element={<EmployeeComponent />} loader={employeeDetailLoader} key="add"/>
       <Route path="/update-employee/:id" element={<EmployeeComponent />}  loader={employeeDetailLoader} key="update"/>
+      <Route path="/register" element={<Register />} action={registerAction} />
     </Route>
 
   </Route>

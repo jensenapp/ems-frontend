@@ -4,17 +4,23 @@ import { redirect, useNavigate } from 'react-router-dom';
 import { useLoaderData } from 'react-router-dom';
 import { useRevalidator } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useAuth } from "../store/auth-context";
+
 const ListEmployeeComponent = () => {
   
   const navigate = useNavigate();
 
   const handleAddEmployee = () => navigate("/add-employee");
 
+  const handleCreateAccount = () => navigate("/register"); 
+
   const employees=useLoaderData();
 
   const revalidator=useRevalidator();
 
- 
+  const {user}=useAuth();
+
+  const isAdmin=user?.roles?.includes("ROLE_ADMIN");
 
   const removeEmployee = async(id) => {
    try {
@@ -34,8 +40,21 @@ const ListEmployeeComponent = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 mt-10 mb-20">
       <h1 className="text-3xl font-bold text-gray-800 text-center mb-8">List of Employees</h1>
-      
-      <div className="mb-4 flex justify-start">
+    
+    {
+    isAdmin && <div className="mb-4 flex justify-start gap-4">
+        {/* 新增創建帳號的按鈕 */}
+        <button 
+          className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors" 
+          onClick={handleCreateAccount}
+        >
+          Create Account
+        </button>
+      </div>
+   }
+
+   {
+    isAdmin && <div className="mb-4 flex justify-start">
         <button 
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" 
           onClick={handleAddEmployee}
@@ -43,6 +62,7 @@ const ListEmployeeComponent = () => {
           Add Employee
         </button>
       </div>
+   }
 
      
       <div className="bg-white shadow-md rounded-lg overflow-hidden border border-gray-200 overflow-x-auto">
@@ -66,7 +86,7 @@ const ListEmployeeComponent = () => {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{item.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-center">
                   
-                  {/* Update 按鈕 (原本的 btn-info) */}
+                 
                   <button 
                     className="bg-teal-500 hover:bg-teal-600 text-white py-1.5 px-3 rounded-md shadow-sm transition-colors duration-200 mr-2" 
                     onClick={() => updateEmployee(item.employeeId)}
@@ -74,13 +94,13 @@ const ListEmployeeComponent = () => {
                     Update
                   </button>
                   
-                  {/* Delete 按鈕 (原本的 btn-danger，把 style margin-left 改成了 Tailwind 的 ml-2) */}
-                  <button 
+                  
+                  {isAdmin && <button 
                     className="bg-red-500 hover:bg-red-600 text-white py-1.5 px-3 rounded-md shadow-sm transition-colors duration-200 ml-2" 
                     onClick={() => removeEmployee(item.employeeId)}
                   >
                     Delete
-                  </button>
+                  </button>}
                   
                 </td>
               </tr>

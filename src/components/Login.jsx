@@ -109,16 +109,7 @@ export default function Login() {
           </div>
         </Form>
 
-        {/* 註冊連結 */}
-        <p className="text-center text-gray-600 dark:text-gray-400 mt-4">
-          Don't have an account?{" "}
-          <Link
-            to="/register"
-            className="text-primary dark:text-light hover:text-dark dark:hover:text-primary transition duration-200"
-          >
-            Register Here
-          </Link>
-        </p>
+
       </div>
     </div>
   );

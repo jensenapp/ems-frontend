@@ -23,7 +23,7 @@ export default function Register() {
 
   useEffect(() => {
     if (actionData?.success) {
-      navigate("/login");
+      navigate("/employees");
       toast.success("Registration completed successfully. Try login..");
     }
   }, [actionData, navigate]);
