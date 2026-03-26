@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import ListEmployeeComponent, { employeeLoader } from "./components/ListEmployeeComponent"
-import EmployeeComponent, { employeeDetailLoader } from "./components/EmployeeComponent"
+import EmployeeComponent from "./components/EmployeeComponent"
 import HomeComponent from "./components/HomeComponent"
 import { createBrowserRouter, RouterProvider,createRoutesFromElements,Route } from "react-router-dom";
 import App from './App.jsx';
@@ -12,7 +12,8 @@ import './index.css'
 import ProtectedRoute from "./components/ProtectedRoute"
 import Login, { loginAction } from './components/Login.jsx'
 import { AuthProvider } from './store/auth-context.jsx'
-import Register, { registerAction } from './components/Register.jsx'
+import ChangePasswordComponent from './components/ChangePasswordComponent.jsx'
+
 
 
 // 定義路由變數
@@ -26,9 +27,9 @@ const routeDefinitions = createRoutesFromElements(
     {/* 受保護的路由 (必須登入才能看) */}
     <Route element={<ProtectedRoute />}>
       <Route path="/employees" element={<ListEmployeeComponent />} loader={employeeLoader}/>
-      <Route path="/add-employee" element={<EmployeeComponent />} loader={employeeDetailLoader} key="add"/>
-      <Route path="/update-employee/:id" element={<EmployeeComponent />}  loader={employeeDetailLoader} key="update"/>
-      <Route path="/register" element={<Register />} action={registerAction} />
+      <Route path="/add-employee" element={<EmployeeComponent />}  key="add"/>
+      <Route path="/update-employee/:id" element={<EmployeeComponent />}  key="update"/>
+      <Route path="/change-password" element={<ChangePasswordComponent/>}/>
     </Route>
 
   </Route>

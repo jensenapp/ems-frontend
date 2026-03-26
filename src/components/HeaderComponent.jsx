@@ -25,7 +25,22 @@ const { isAuthenticated,user,logout } = useAuth();
         >
           Employee Management System
         </a>
-      { isAuthenticated && <button onClick={handleLogout} className='bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition'>登出</button> }
+      { isAuthenticated && (
+          <div className="flex gap-4">
+            <button 
+              onClick={() => navigate("/change-password")} 
+              className="text-white hover:text-blue-300 transition font-medium"
+            >
+              修改密碼
+            </button>
+            <button 
+              onClick={handleLogout} 
+              className="bg-red-500 text-white px-5 py-1.5 rounded hover:bg-red-600 transition shadow"
+            >
+              登出
+            </button>
+          </div>
+        )}
       </nav>
     </header>
   )

@@ -5,4 +5,4 @@ const BASE="/auth";
 
 export const login=(data)=>apiClient.post(BASE+"/login",data);
 
-export const register=(data)=>apiClient.post(BASE+"/register",data);
+export const changePassword=(data)=>apiClient.put(BASE+"/change-password",data);

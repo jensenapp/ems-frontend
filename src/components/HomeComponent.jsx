@@ -20,7 +20,7 @@ const handleLogout=()=>{
   <div className="flex flex-col items-center justify-center min-h-[80vh] text-center">
       <h1 className="text-4xl font-bold mb-4">歡迎，{user?.name}！來到員工管理系統</h1>
       <a href="/employees" className='bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition'>返回管理頁面</a>
-      <button onClick={handleLogout} className='bg-red-500 text-white px-6 py-2 rounded hover:bg-red-600 transition'>登出</button>
+      
     </div>
     ) : (
          <div className="flex flex-col items-center justify-center min-h-[80vh] text-center">
